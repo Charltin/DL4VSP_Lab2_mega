@@ -10,7 +10,11 @@ Source git repository address: https://github.com/Scalsol/mega.pytorch
 Following the steps below will run the base and mega methods in the demo.
 
 ## Steps:
-1. Use `git clone https://github.com/Charltin/DL4VSP_Lab2_mega.git` to download.
+1. ```
+    git clone https://github.com/Charltin/DL4VSP_Lab2_mega.git
+    cd DL4VSP_Lab2_mega
+    git checkout session1
+    ```
 
 2. Follow the steps in the `INSTALL.md` or just copy the follow commands, remember to edit the `$PWD` to the right path.
     ```bash
