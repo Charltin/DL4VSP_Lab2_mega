@@ -1,31 +1,137 @@
-# MEGA for Video Object Detection
+# MEGA for Video Object Detection - mega.pytorch
+Members: Xinyi Lyu, Marith Wagegg
+Original members: [Yihong Chen](https://scalsol.github.io), [Yue Cao](http://yue-cao.me), [Han Hu](https://ancientmooner.github.io/), [Liwei Wang](http://www.liweiwang-pku.com/).
 
-[![License](https://img.shields.io/badge/license-BSD-blue.svg)](LICENSE)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/memory-enhanced-global-local-aggregation-for/video-object-detection-on-imagenet-vid)](https://paperswithcode.com/sota/video-object-detection-on-imagenet-vid?p=memory-enhanced-global-local-aggregation-for)
+Source git repository address: https://github.com/Scalsol/mega.pytorch
 
-By [Yihong Chen](https://scalsol.github.io), [Yue Cao](http://yue-cao.me), [Han Hu](https://ancientmooner.github.io/), [Liwei Wang](http://www.liweiwang-pku.com/).
+> This repo is an official implementation of ["Memory Enhanced Global-Local Aggregation for Video Object Detection"](https://arxiv.org/abs/2003.12063), accepted by CVPR 2020. This repository contains a PyTorch implementation of our approach MEGA based on [maskrcnn_benchmark](https://github.com/facebookresearch/maskrcnn-benchmark), as well as some training scripts to reproduce the results on ImageNet VID reported in our paper. 
+> Besides, this repository also implements several other algorithms like [FGFA](http://openaccess.thecvf.com/content_iccv_2017/html/Zhu_Flow-Guided_Feature_Aggregation_ICCV_2017_paper.html) and [RDN](https://arxiv.org/abs/1908.09511). 
 
-This repo is an official implementation of ["Memory Enhanced Global-Local Aggregation for Video Object Detection"](https://arxiv.org/abs/2003.12063), accepted by CVPR 2020. This repository contains a PyTorch implementation of our approach MEGA based on [maskrcnn_benchmark](https://github.com/facebookresearch/maskrcnn-benchmark), as well as some training scripts to reproduce the results on ImageNet VID reported in our paper. 
+Following the steps below will run the base and mega methods in the demo. But in this session we will do object detection on video.
 
-Besides, this repository also implements several other algorithms like [FGFA](http://openaccess.thecvf.com/content_iccv_2017/html/Zhu_Flow-Guided_Feature_Aggregation_ICCV_2017_paper.html) and [RDN](https://arxiv.org/abs/1908.09511). Any new methods are welcomed. Hoping for your pull request! We hope this repository would help further research in the field of video object detection and beyond. :)
+## Steps:
+1. 
+    ```
+    git clone https://github.com/Charltin/DL4VSP_Lab2_mega.git
+    cd DL4VSP_Lab2_mega
+    git checkout session2
+    ```
 
-## Citing MEGA
-Please cite our paper in your publications if it helps your research:
-```
-@inproceedings{chen20mega,
-    Author = {Chen, Yihong and Cao, Yue and Hu, Han and Wang, Liwei},
-    Title = {Memory Enhanced Global-Local Aggregation for Video Object Detection},
-    Conference = {CVPR},
-    Year = {2020}
-}
-```
+2. Follow the steps in the `INSTALL.md` or just copy the follow commands, remember to edit the `$PWD` to the right path.
+    ```bash
+    conda create --name MEGA -y python=3.7
+    source activate MEGA
 
-## Updates
+    conda install ipython pip
+    pip install ninja yacs cython matplotlib tqdm opencv-python scipy
+    conda install pytorch=1.2.0 torchvision=0.4.0 cudatoolkit=10.0 -c pytorch
+    conda install -c conda-forge cudatoolkit-dev=10.0
 
-- Add motion-IoU specific AP evaluation code. Only available for ImageNet VID dataset. (19/06/2020)
-- Demo for visualization added (Support image folder and video). (17/06/2020)
-- Results of ResNet-50 backbone added. (13/04/2020)
-- Code and pretrained weights for [Deep Feature Flow](https://arxiv.org/abs/1611.07715) released. (30/03/2020)
+    export INSTALL_DIR=$PWD
+
+    cd $INSTALL_DIR
+    git clone https://github.com/cocodataset/cocoapi.git
+    cd cocoapi/PythonAPI
+    python setup.py build_ext install
+    cd $INSTALL_DIR
+    git clone https://github.com/mcordts/cityscapesScripts.git
+    cd cityscapesScripts/
+    python setup.py build_ext install
+    cd $INSTALL_DIR
+    git clone https://github.com/NVIDIA/apex.git
+    cd apex
+    git checkout e3794f422628d453b036f69de476bf16a0a838ac
+    python setup.py build_ext install
+    cd $INSTALL_DIR
+    git clone https://github.com/Scalsol/mega.pytorch.git
+    cd mega.pytorch
+    python setup.py build develop
+
+    pip install 'pillow<7.0.0'
+
+    unset INSTALL_DIR
+    ```
+3. In the `mega.pytorch\demo\predictor.py`, modify the following code to avoid the error in opencv.
+    Previous:
+    ```
+    cv2.putText(
+                image, s, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2
+            )
+    ```
+    After:
+    ```
+    cv2.putText(
+                image, s, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2
+            )
+    ```
+4. Download the models in the follow `Main Results`, I use `single frame baseline` and `MEGA` with ResNet-101 backbone.
+**Place model `R_101.pth` and `MEGA_R_101.pth` in the `mega.pytorch` folder.**
+
+5. Download the datasets: in session 2 I use the 3 videos in `UCF101` and 1 video download from internet.
+**Place the videos in the `mega.pytorch/datasets/ILSVRC2015/Data/video_folder`.**
+
+6. Make sure you are in the `mega.pytorch` folder in the `MEGA` environment and run the following command for `BASE` and `MEGA`. 
+**You need to change the path of video, change the name of the video to yours.**
+
+    BASE:
++ dog_and_cat.mp4: 
+    ```bash
+    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/dog_and_cat.mp4 \
+        --output-folder visualization_video --output-video
+    ```
+
++ v_HorseRiding_g10_c01.avi: 
+    ```bash
+    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/v_HorseRiding_g10_c01.avi \
+        --output-folder visualization_video --output-video
+    ```
+
++  v_WalkingWithDog_g01_c01.avi: 
+    ```bash
+    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/v_WalkingWithDog_g01_c01.avi \
+        --output-folder visualization_video --output-video
+    ```
+
++ v_WalkingWithDog_g10_c03.avi: 
+    ```bash
+    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/v_WalkingWithDog_g10_c03.avi \
+        --output-folder visualization_video --output-video
+    ```
+
+    MEGA:
++ dog_and_cat.mp4: 
+    ```
+    python demo/demo.py mega configs/MEGA/vid_R_101_C4_MEGA_1x.yaml MEGA_R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/dog_and_cat.mp4 \
+        --output-folder visualization_video_mega --output-video
+    ```
+
++ v_HorseRiding_g10_c01.avi: 
+    ```
+    python demo/demo.py mega configs/MEGA/vid_R_101_C4_MEGA_1x.yaml MEGA_R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/v_HorseRiding_g10_c01.avi \
+        --output-folder visualization_video_mega --output-video
+    ```
+
++ v_WalkingWithDog_g01_c01.avi: 
+    ```
+    python demo/demo.py mega configs/MEGA/vid_R_101_C4_MEGA_1x.yaml MEGA_R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/v_WalkingWithDog_g01_c01.avi \
+        --output-folder visualization_video_mega --output-video
+    ```
+
++ v_WalkingWithDog_g10_c03.avi: 
+    ```bash
+    python demo/demo.py mega configs/MEGA/vid_R_101_C4_MEGA_1x.yaml MEGA_R_101.pth --video \
+        --visualize-path datasets/ILSVRC2015/Data/video_folder/v_WalkingWithDog_g10_c03.avi \
+        --output-folder visualization_video_mega --output-video
+    ```
+
+    And you'll see the outputs in the `visualization_video`(base) and `visualization_video_mega`(mega) folders.
 
 ## Main Results
 
@@ -51,81 +157,3 @@ RDN-base | ResNet-50 | 76.7 | 53.8 | 74.8 | 85.4 | [Google](https://drive.google
 **Note**: The performance of ResNet-50 backbone are not so stable.
 
 **Note**: The motion-IoU specific AP evaluation code is a bit different from the original implementation in FGFA. I think the original implementation is really weird so I modify it. So the results may not be directly comparable with the results provided in FGFA and other methods that use MXNet version evaluation code. But we could tell which method is relatively better under the same evaluation protocol. 
-
-## Installation
-
-Please follow [INSTALL.md](INSTALL.md) for installation instructions.
-
-## Data preparation
-
-Please download ILSVRC2015 DET and ILSVRC2015 VID dataset from [here](http://image-net.org/challenges/LSVRC/2015/2015-downloads). After that, we recommend to symlink the path to the datasets to `datasets/`. And the path structure should be as follows:
-
-    ./datasets/ILSVRC2015/
-    ./datasets/ILSVRC2015/Annotations/DET
-    ./datasets/ILSVRC2015/Annotations/VID
-    ./datasets/ILSVRC2015/Data/DET
-    ./datasets/ILSVRC2015/Data/VID
-    ./datasets/ILSVRC2015/ImageSets
-    
-**Note**: We have already provided a list of all images we use to train and test our model as txt files under directory `datasets/ILSVRC2015/ImageSets`. You do not need to change them.
-
-## Usage
-
-**Note**: Cache files will be created at the first time you run this project, this may take some time! Don't worry!
-
-**Note**: Currently, one GPU could only hold 1 image. Do not put 2 or more images on 1 GPU!
-
-**Note** We provide template files named `BASE_RCNN_{}gpus.yaml` which would automatically change the batch size and other relevant settings. This behavior is similar to detectron2. If you want to train model with different number of gpus, please change it by yourself :) But assure **1 GPU only holds 1 image**! That is to say, you should always keep `SOLVER.IMS_PER_BATCH` and `TEST.IMS_PER_BATCH` equal to the number of GPUs you use.
-
-### Inference
-
-The inference command line for testing on the validation dataset:
-
-    python -m torch.distributed.launch \
-        --nproc_per_node 4 \
-        tools/test_net.py \
-        --config-file configs/MEGA/vid_R_101_C4_MEGA_1x.yaml \
-        --motion-specific \
-        MODEL.WEIGHT MEGA_R_101.pth 
-        
-Please note that:
-1) If your model's name is different, please replace `MEGA_R_101.pth` with your own.
-2) If you want to evaluate a different model, please change `--config-file` to its config file and `MODEL.WEIGHT` to its weights file.
-3) If you do not want to evaluate motion-IoU specific AP, simply deleting `--motion-specific`.
-4) Testing is time-consuming, so be patient!
-5) As testing on above 170000+ frames is toooo time-consuming, so we enable directly testing on generated bounding boxes, which is automatically saved in a file named `predictions.pth` on your training directory. That means you do not need to run the evaluation from the very start every time. You could access this by running:
-```
-    python tools/test_prediction.py \
-        --config-file configs/MEGA/vid_R_101_C4_MEGA_1x.yaml \
-        --prediction [YOUR predictions.pth generated by MEGA]
-        --motion-specific
-```
-
-### Training
-
-The following command line will train MEGA_R_101_FPN_1x on 4 GPUs with Synchronous Stochastic Gradient Descent (SGD):
-
-    python -m torch.distributed.launch \
-        --nproc_per_node=4 \
-        tools/train_net.py \
-        --master_port=$((RANDOM + 10000)) \
-        --config-file configs/MEGA/vid_R_101_C4_MEGA_1x.yaml \
-        --motion-specific \
-        OUTPUT_DIR training_dir/MEGA_R_101_1x
-        
-Please note that:
-1) The models will be saved into `OUTPUT_DIR`.
-2) If you want to train MEGA and other methods with other backbones, please change `--config-file`.
-3) For training FGFA and DFF, we need pretrained weight of FlowNet. We provide the converted version [here](https://drive.google.com/file/d/1gib7XtS1fSYDTM9RnUJ72a3vREV_6SJH/view?usp=sharing). After downloaded, it should be placed at `models/`. See `config/defaults.py` and the code for further details.
-4) For training RDN, we adopt the same two-stage training strategy as described in its original paper. The first phase should be run with config file `configs/RDN/vid_R_101_C4_RDN_base_1x.yaml`. For the second phase, `MODEL.WEIGHT` should be set to the filename of the final model of the first stage training. Or you could rename the model's filename to `RDN_base_R_101.pth` and put it under `models/` and directly train the second phase with config file `configs/RDN/vid_R_101_C4_RDN_1x.yaml`.
-5) If you do not want to evaluate motion-IoU specific AP at the end of training, simply deleting `--motion-specific`.
-
-### Demo Usage
-Please follow [demo/README.md](demo/README.md) to see how to visualize your own images or video.
-
-### Customize
-
-If you want to use these methods on your own dataset or implement your new method. Please follow [CUSTOMIZE.md](CUSTOMIZE.md).
-
-## Contributing to the project
-Any pull requests or issues are welcomed.
