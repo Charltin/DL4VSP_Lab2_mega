@@ -63,6 +63,7 @@ vid_demo = VIDDemo(
     output_folder=args.output_folder
 )
 
+print("args = ", args)
 if not args.video:
     visualization_results = vid_demo.run_on_image_folder(args.visualize_path, suffix=args.suffix)
 else:

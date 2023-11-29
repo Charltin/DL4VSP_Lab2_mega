@@ -29,9 +29,12 @@ pip install ninja yacs cython matplotlib tqdm opencv-python scipy
 
 # follow PyTorch installation in https://pytorch.org/get-started/locally/
 # we give the instructions for CUDA 10.0
-conda install pytorch=1.3.0 torchvision cudatoolkit=10.0 -c pytorch
+# conda install pytorch=1.3.0 torchvision cudatoolkit=10.0 -c pytorch
+conda install pytorch=1.2.0 torchvision=0.4.0 cudatoolkit=10.0 -c pytorch
+conda install -c conda-forge cudatoolkit-dev=10.0
 
 export INSTALL_DIR=$PWD
+export INSTALL_DIR=/media/DiscoLocal/MUDLAVSP/DL4VSP_Lab2_mega/
 
 # install pycocotools
 cd $INSTALL_DIR
@@ -49,7 +52,9 @@ python setup.py build_ext install
 cd $INSTALL_DIR
 git clone https://github.com/NVIDIA/apex.git
 cd apex
-python setup.py install --cuda_ext --cpp_ext
+git checkout e3794f422628d453b036f69de476bf16a0a838ac
+python setup.py build_ext install
+# python setup.py install --cuda_ext --cpp_ext
 
 # install PyTorch Detection
 cd $INSTALL_DIR
@@ -69,3 +74,27 @@ unset INSTALL_DIR
 # or if you are on macOS
 # MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py build develop
 ```
+source activate MEGA
+
+export INSTALL_DIR=/media/DiscoLocal/MUDLAVSP/DL4VSP_Lab2_mega/
+cd $INSTALL_DIR
+git clone https://github.com/cocodataset/cocoapi.git
+cd cocoapi/PythonAPI
+python setup.py build_ext install
+cd $INSTALL_DIR
+git clone https://github.com/mcordts/cityscapesScripts.git
+cd cityscapesScripts/
+python setup.py build_ext install
+cd $INSTALL_DIR
+git clone https://github.com/NVIDIA/apex.git
+cd apex
+git checkout e3794f422628d453b036f69de476bf16a0a838ac
+python setup.py build_ext install
+cd $INSTALL_DIR
+git clone https://github.com/Scalsol/mega.pytorch.git
+cd mega.pytorch
+python setup.py build develop
+
+pip install 'pillow<7.0.0'
+
+unset INSTALL_DIR
