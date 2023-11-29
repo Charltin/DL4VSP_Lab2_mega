@@ -1,5 +1,6 @@
 # MEGA for Video Object Detection - mega.pytorch
 Members: Xinyi Lyu, Marith Wagegg
+
 Original members: [Yihong Chen](https://scalsol.github.io), [Yue Cao](http://yue-cao.me), [Han Hu](https://ancientmooner.github.io/), [Liwei Wang](http://www.liweiwang-pku.com/).
 
 Source git repository address: https://github.com/Scalsol/mega.pytorch
@@ -50,7 +51,7 @@ Following the steps below will run the base and mega methods in the demo.
 
     unset INSTALL_DIR
     ```
-3. In the `mega.pytorch\demo\predictor.py`, modify the following code to avoid the error in opencv.
+3. In the `mega.pytorch\demo\predictor.py`, modify the following code to avoid the error in opencv.  
     Previous:
     ```
     cv2.putText(
@@ -63,10 +64,10 @@ Following the steps below will run the base and mega methods in the demo.
                 image, s, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2
             )
     ```
-3. Download the models in the follow `Main Results`, I use `single frame baseline` and `MEGA` with ResNet-101 backbone.
+3. Download the models in the follow `Main Results`, I use `single frame baseline` and `MEGA` with ResNet-101 backbone.  
 **Place model `R_101.pth` and `MEGA_R_101.pth` in the `mega.pytorch` folder.**
 
-4. Download the datasets, in session 1 I used the given [dataset](https://posgrado.uam.es/mod/resource/view.php?id=908972).
+4. Download the datasets, in session 1 I used the given [dataset](https://posgrado.uam.es/mod/resource/view.php?id=908972).  
 **Place the images in the `mega.pytorch/datasets/ILSVRC2015/Data/image_folder`.**
 
 5. Make sure you are in the `mega.pytorch` folder in the `MEGA` environment and run the following command for `BASE` and `MEGA`. 
