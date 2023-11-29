@@ -13,62 +13,74 @@ Following the steps below will run the base and mega methods in the demo.
 1. Use `git clone https://github.com/Charltin/DL4VSP_Lab2_mega.git` to download.
 
 2. Follow the steps in the `INSTALL.md` or just copy the follow commands, remember to edit the `$PWD` to the right path.
-```bash
-conda create --name MEGA -y python=3.7
-source activate MEGA
+    ```bash
+    conda create --name MEGA -y python=3.7
+    source activate MEGA
 
-conda install ipython pip
-pip install ninja yacs cython matplotlib tqdm opencv-python scipy
-conda install pytorch=1.2.0 torchvision=0.4.0 cudatoolkit=10.0 -c pytorch
-conda install -c conda-forge cudatoolkit-dev=10.0
+    conda install ipython pip
+    pip install ninja yacs cython matplotlib tqdm opencv-python scipy
+    conda install pytorch=1.2.0 torchvision=0.4.0 cudatoolkit=10.0 -c pytorch
+    conda install -c conda-forge cudatoolkit-dev=10.0
 
-export INSTALL_DIR=$PWD
+    export INSTALL_DIR=$PWD
 
-cd $INSTALL_DIR
-git clone https://github.com/cocodataset/cocoapi.git
-cd cocoapi/PythonAPI
-python setup.py build_ext install
-cd $INSTALL_DIR
-git clone https://github.com/mcordts/cityscapesScripts.git
-cd cityscapesScripts/
-python setup.py build_ext install
-cd $INSTALL_DIR
-git clone https://github.com/NVIDIA/apex.git
-cd apex
-git checkout e3794f422628d453b036f69de476bf16a0a838ac
-python setup.py build_ext install
-cd $INSTALL_DIR
-git clone https://github.com/Scalsol/mega.pytorch.git
-cd mega.pytorch
-python setup.py build develop
+    cd $INSTALL_DIR
+    git clone https://github.com/cocodataset/cocoapi.git
+    cd cocoapi/PythonAPI
+    python setup.py build_ext install
+    cd $INSTALL_DIR
+    git clone https://github.com/mcordts/cityscapesScripts.git
+    cd cityscapesScripts/
+    python setup.py build_ext install
+    cd $INSTALL_DIR
+    git clone https://github.com/NVIDIA/apex.git
+    cd apex
+    git checkout e3794f422628d453b036f69de476bf16a0a838ac
+    python setup.py build_ext install
+    cd $INSTALL_DIR
+    git clone https://github.com/Scalsol/mega.pytorch.git
+    cd mega.pytorch
+    python setup.py build develop
 
-pip install 'pillow<7.0.0'
+    pip install 'pillow<7.0.0'
 
-unset INSTALL_DIR
-```
-
+    unset INSTALL_DIR
+    ```
+3. In the `mega.pytorch\demo\predictor.py`, modify the following code to avoid the error in opencv.
+    Previous:
+    ```
+    cv2.putText(
+                image, s, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2
+            )
+    ```
+    After:
+    ```
+    cv2.putText(
+                image, s, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2
+            )
+    ```
 3. Download the models in the follow `Main Results`, I use `single frame baseline` and `MEGA` with ResNet-101 backbone.
 **Place model `R_101.pth` and `MEGA_R_101.pth` in the `mega.pytorch` folder.**
 
 4. Download the datasets, in session 1 I used the given [dataset](https://posgrado.uam.es/mod/resource/view.php?id=908972).
 **Place the images in the `mega.pytorch/datasets/ILSVRC2015/Data/image_folder`.**
 
-5. Make sure you are in the `mega.pytorch` folder in the `MEGA` environment and run the following command for `BASE` and `MEGA`. Similarly, you can follow the `README.md` file in the `mega.pytorch\demo` directory.
+5. Make sure you are in the `mega.pytorch` folder in the `MEGA` environment and run the following command for `BASE` and `MEGA`. 
 
-BASE:
-```bash
-    python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth \
-        --visualize-path datasets/ILSVRC2015/Data/image_folder --suffix ".JPEG"\
-        --output-folder visualization
-```
-MEGA:
-```bash
-    python demo/demo.py mega configs/MEGA/vid_R_101_C4_MEGA_1x.yaml MEGA_R_101.pth \
-        --visualize-path datasets/ILSVRC2015/Data/image_folder \
-        --suffix ".JPEG" --output-folder visualization_mega
-```
+    BASE:
+    ```bash
+        python demo/demo.py base configs/vid_R_101_C4_1x.yaml R_101.pth \
+            --visualize-path datasets/ILSVRC2015/Data/image_folder --suffix ".JPEG"\
+            --output-folder visualization
+    ```
+    MEGA:
+    ```bash
+        python demo/demo.py mega configs/MEGA/vid_R_101_C4_MEGA_1x.yaml MEGA_R_101.pth \
+            --visualize-path datasets/ILSVRC2015/Data/image_folder \
+            --suffix ".JPEG" --output-folder visualization_mega
+    ```
 
-And you'll see the outputs in the `visualization`(base) and `visualization_mega`(mega) folder.
+    And you'll see the outputs in the `visualization`(base) and `visualization_mega`(mega) folder.
 
 ## Main Results
 
