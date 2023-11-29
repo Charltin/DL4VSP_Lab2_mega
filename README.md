@@ -1,5 +1,6 @@
 # MEGA for Video Object Detection - mega.pytorch
 Members: Xinyi Lyu, Marith Wagegg
+
 Original members: [Yihong Chen](https://scalsol.github.io), [Yue Cao](http://yue-cao.me), [Han Hu](https://ancientmooner.github.io/), [Liwei Wang](http://www.liweiwang-pku.com/).
 
 Source git repository address: https://github.com/Scalsol/mega.pytorch
@@ -64,13 +65,13 @@ Following the steps below will run the base and mega methods in the demo. But in
                 image, s, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2
             )
     ```
-4. Download the models in the follow `Main Results`, I use `single frame baseline` and `MEGA` with ResNet-101 backbone.
+4. Download the models in the follow `Main Results`, I use `single frame baseline` and `MEGA` with ResNet-101 backbone.  
 **Place model `R_101.pth` and `MEGA_R_101.pth` in the `mega.pytorch` folder.**
 
-5. Download the datasets: in session 2 I use the 3 videos in `UCF101` and 1 video download from internet.
+5. Download the datasets: in session 2 I use the 3 videos in `UCF101` and 1 video download from internet.  
 **Place the videos in the `mega.pytorch/datasets/ILSVRC2015/Data/video_folder`.**
 
-6. Make sure you are in the `mega.pytorch` folder in the `MEGA` environment and run the following command for `BASE` and `MEGA`. 
+6. Make sure you are in the `mega.pytorch` folder in the `MEGA` environment and run the following command for `BASE` and `MEGA`.   
 **You need to change the path of video, change the name of the video to yours.**
 
     BASE:
