@@ -74,9 +74,19 @@ unset INSTALL_DIR
 # or if you are on macOS
 # MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py build develop
 ```
+
+Easy to run together:
+```bash
+conda create --name MEGA -y python=3.7
 source activate MEGA
 
-export INSTALL_DIR=/media/DiscoLocal/MUDLAVSP/DL4VSP_Lab2_mega/
+conda install ipython pip
+pip install ninja yacs cython matplotlib tqdm opencv-python scipy
+conda install pytorch=1.2.0 torchvision=0.4.0 cudatoolkit=10.0 -c pytorch
+conda install -c conda-forge cudatoolkit-dev=10.0
+
+export INSTALL_DIR=$PWD
+
 cd $INSTALL_DIR
 git clone https://github.com/cocodataset/cocoapi.git
 cd cocoapi/PythonAPI
@@ -98,3 +108,4 @@ python setup.py build develop
 pip install 'pillow<7.0.0'
 
 unset INSTALL_DIR
+```
